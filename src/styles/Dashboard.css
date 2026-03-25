@@ -13,7 +13,6 @@
   margin-bottom: 0.25rem;
 }
 
-/* KPIs Grid Layout */
 .dashboard-kpis {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -59,7 +58,6 @@
   color: var(--text-light);
 }
 
-/* Institutional Performance Panel */
 .dashboard-performance {
   display: grid;
   grid-template-columns: 1fr;
@@ -170,15 +168,38 @@
   transition: width 1s ease-out;
 }
 
-/* Colores de Utilidad para KPIs */
-.bg-blue-light { background-color: #eff6ff; }
-.text-blue { color: #2563eb; }
-.fill-blue { background-color: #2563eb; }
+.bg-blue-light {
+  background-color: #eff6ff;
+}
 
-.bg-green-light { background-color: #ecfdf5; }
-.text-green { color: #059669; }
-.fill-green { background-color: #059669; }
+.text-blue {
+  color: #2563eb;
+}
 
-.bg-orange-light { background-color: #fff7ed; }
-.text-orange { color: #ea580c; }
-.fill-orange { background-color: #ea580c; }
+.fill-blue {
+  background-color: #2563eb;
+}
+
+.bg-green-light {
+  background-color: #ecfdf5;
+}
+
+.text-green {
+  color: #059669;
+}
+
+.fill-green {
+  background-color: #059669;
+}
+
+.bg-orange-light {
+  background-color: #fff7ed;
+}
+
+.text-orange {
+  color: #ea580c;
+}
+
+.fill-orange {
+  background-color: #ea580c;
+}

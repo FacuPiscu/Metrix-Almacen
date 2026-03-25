@@ -192,8 +192,13 @@
   background-color: var(--background-color);
 }
 
-.edit-btn:hover { color: var(--primary-color); }
-.delete-btn:hover { text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+.edit-btn:hover {
+  color: var(--primary-color);
+}
+
+.delete-btn:hover {
+  text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+}
 
 .zone-title {
   font-size: 1.125rem;
@@ -207,7 +212,6 @@
   color: var(--text-light);
 }
 
-/* Base styles for tables in clean architectures */
 .table-container {
   padding: 0;
   overflow: hidden;
@@ -250,7 +254,6 @@
   font-weight: 600;
 }
 
-/* Operations Grids */
 .operations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -370,7 +373,6 @@
   font-size: 0.75rem;
 }
 
-/* Modal Overlay Styles */
 .modal-overlay {
   position: fixed;
   top: 0;

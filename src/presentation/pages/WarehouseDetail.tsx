@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  MapPin, Pencil, Trash, Building2, PackagePlus, ArrowRightLeft, 
+import {
+  MapPin, Pencil, Trash, Building2, PackagePlus, ArrowRightLeft,
   Camera, QrCode, ClipboardCheck, CalendarClock, FileText, CheckCircle,
   PackageMinus, Truck, CheckCheck, PenTool, Eye
 } from 'lucide-react';
@@ -35,14 +35,13 @@ const WarehouseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [warehouse, setWarehouse] = useState<Warehouse | null>(null);
   const [zones, setZones] = useState<Zone[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'zones' | 'items' | 'inbound' | 'outbound'>('zones');
-  
-  // INBOUND Modals state
+
   const [isInboundModalOpen, setIsInboundModalOpen] = useState(false);
   const [inboundStep, setInboundStep] = useState<'form' | 'success'>('form');
   const [inboundForm, setInboundForm] = useState({ contract: '', date: '', provider: '' });
@@ -55,7 +54,6 @@ const WarehouseDetail = () => {
   const [storeStep, setStoreStep] = useState<'form' | 'success'>('form');
   const [storeForm, setStoreForm] = useState({ itemId: '', zoneId: '' });
 
-  // OUTBOUND Modals state
   const [isPackModalOpen, setIsPackModalOpen] = useState(false);
   const [packStep, setPackStep] = useState<'form' | 'success'>('form');
   const [packForm, setPackForm] = useState({ projectId: '', boxId: '' });
@@ -69,7 +67,6 @@ const WarehouseDetail = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Trace Modal state
   const [isTraceModalOpen, setIsTraceModalOpen] = useState(false);
   const [selectedItemForTrace, setSelectedItemForTrace] = useState<Item | null>(null);
 
@@ -147,15 +144,13 @@ const WarehouseDetail = () => {
 
       <div className="tab-content">
 
-        {/* --- PESTAÑA: OPERACIONES DE SALIDA (OUTBOUND) --- */}
         {activeTab === 'outbound' && (
           <div className="operations-section animate-fade-in">
             <div className="section-header">
               <h2>Flujos de Salida Logística</h2>
             </div>
-            
+
             <div className="operations-grid">
-              {/* Card: Surtido & Empaque */}
               <div className="card operation-card">
                 <div className="op-icon bg-orange-light text-orange">
                   <PackageMinus size={32} />
@@ -164,7 +159,7 @@ const WarehouseDetail = () => {
                   <h3>Surtido & Empaque</h3>
                   <p>Asigna artículos del almacén a empacado para una orden de venta o proyecto.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-outline"
                   onClick={() => setIsPackModalOpen(true)}
                   disabled={user?.role === 'operador'}
@@ -174,7 +169,6 @@ const WarehouseDetail = () => {
                 </button>
               </div>
 
-              {/* Card: Salida del Envío */}
               <div className="card operation-card">
                 <div className="op-icon bg-blue-light text-blue">
                   <Truck size={32} />
@@ -183,7 +177,7 @@ const WarehouseDetail = () => {
                   <h3>Salida del Envío</h3>
                   <p>Registra el despacho físico de cajas mediante vehículos o fletes.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-blue"
                   onClick={() => setIsDispatchModalOpen(true)}
                 >
@@ -191,7 +185,6 @@ const WarehouseDetail = () => {
                 </button>
               </div>
 
-              {/* Card: Entrega Final */}
               <div className="card operation-card">
                 <div className="op-icon bg-green-light text-green">
                   <CheckCheck size={32} />
@@ -200,7 +193,7 @@ const WarehouseDetail = () => {
                   <h3>Entrega Final</h3>
                   <p>Confirma el arribo del envío al cliente final cerrando todo el orden logístico.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-green"
                   onClick={() => setIsDeliveryModalOpen(true)}
                 >
@@ -211,15 +204,13 @@ const WarehouseDetail = () => {
           </div>
         )}
 
-        {/* --- PESTAÑA: OPERACIONES DE INGRESO (INBOUND) --- */}
         {activeTab === 'inbound' && (
           <div className="operations-section animate-fade-in">
             <div className="section-header">
               <h2>Flujos de Ingreso Logístico</h2>
             </div>
-            
+
             <div className="operations-grid">
-              {/* Card: Registrar Inbound */}
               <div className="card operation-card">
                 <div className="op-icon bg-orange-light text-orange">
                   <CalendarClock size={32} />
@@ -228,7 +219,7 @@ const WarehouseDetail = () => {
                   <h3>Pre-Aviso (Inbound)</h3>
                   <p>Adelanta los datos de un arribo planificado capturando el contrato y proveedor.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-outline"
                   onClick={() => setIsInboundModalOpen(true)}
                 >
@@ -236,7 +227,6 @@ const WarehouseDetail = () => {
                 </button>
               </div>
 
-              {/* Card: Nueva Recepción */}
               <div className="card operation-card">
                 <div className="op-icon bg-blue-light text-blue">
                   <PackagePlus size={32} />
@@ -245,7 +235,7 @@ const WarehouseDetail = () => {
                   <h3>Nueva Recepción</h3>
                   <p>Registra la llegada de nuevos bultos o embarques al almacén general.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-blue"
                   onClick={() => setIsReceptionModalOpen(true)}
                 >
@@ -253,7 +243,6 @@ const WarehouseDetail = () => {
                 </button>
               </div>
 
-              {/* Card: Almacenar Artículo */}
               <div className="card operation-card">
                 <div className="op-icon bg-green-light text-green">
                   <ArrowRightLeft size={32} />
@@ -262,7 +251,7 @@ const WarehouseDetail = () => {
                   <h3>Almacenar Artículo</h3>
                   <p>Asigna un artículo previamente recibido a una zona específica del almacén.</p>
                 </div>
-                <button 
+                <button
                   className="btn btn-large btn-green"
                   onClick={() => setIsStoreModalOpen(true)}
                 >
@@ -273,7 +262,6 @@ const WarehouseDetail = () => {
           </div>
         )}
 
-        {/* --- TABS ANTERIORES SE MANTIENEN --- */}
         {activeTab === 'zones' && (
           <div className="zones-section animate-fade-in">
             <div className="section-header">
@@ -316,8 +304,8 @@ const WarehouseDetail = () => {
                       <td className="item-name">{item.name}</td>
                       <td><span className="badge category-badge">{item.categoryName}</span></td>
                       <td className="actions-cell">
-                        <button 
-                          className="icon-btn" 
+                        <button
+                          className="icon-btn"
                           style={{ color: '#0ea5e9', marginRight: '0.25rem' }}
                           onClick={() => { setSelectedItemForTrace(item); setIsTraceModalOpen(true); }}
                           title="Ver Trazabilidad"
@@ -338,7 +326,7 @@ const WarehouseDetail = () => {
 
       </div>
 
-      {/* --- MODALES OUTBOUND --- */}
+      {/* MODALES */}
 
       {/* Modal: Surtido & Empaque */}
       {isPackModalOpen && (

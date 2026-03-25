@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Search, Bell } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import '../../styles/Navbar.css';
-import '../../styles/Navbar.css';
 
 const mockNotifications = [
   { id: 1, text: 'Nueva orden de salida creada', time: 'Hace 5 min' },
@@ -20,14 +19,12 @@ const Navbar = () => {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       console.log('Buscando en sistema:', searchQuery);
-      // Aquí podrías agregar la lógica real de ruteo o fetcheo
     }
   };
 
   return (
     <nav className="navbar shadow-md">
       <div className="navbar-container container">
-        {/* Left: Brand / Links */}
         <div className="navbar-left">
           <Link to="/" className="navbar-brand">
             Metrix Almacén
@@ -38,13 +35,12 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Center: Search */}
         <div className="navbar-search">
           <div className="search-input-wrapper">
             <Search size={18} className="search-icon" />
-            <input 
-              type="text" 
-              placeholder="Buscar folios, artículos, actas..." 
+            <input
+              type="text"
+              placeholder="Buscar folios, artículos, actas..."
               className="search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -53,19 +49,18 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right: User / Notifications */}
         <div className="navbar-right">
           {user ? (
             <>
               <div className="navbar-notifications">
-                <button 
+                <button
                   className="notification-btn"
                   onClick={() => setShowNotifications(!showNotifications)}
                 >
                   <Bell size={20} />
-                  <span className="notification-badge">2</span>
+                  <span className="notification-badge">{mockNotifications.length}</span>
                 </button>
-                
+
                 {showNotifications && (
                   <div className="notification-dropdown animate-fade-in">
                     <div className="dropdown-header">Notificaciones</div>
@@ -80,14 +75,13 @@ const Navbar = () => {
                   </div>
                 )}
               </div>
-              
-              {/* User Role Badge */}
+
               <div style={{ marginLeft: '1rem', marginRight: '1rem', display: 'flex', alignItems: 'center' }}>
                 <span className="badge bg-blue-light text-blue" style={{ textTransform: 'capitalize' }}>
                   {user.role}
                 </span>
               </div>
-              
+
               <button onClick={logout} className="btn btn-danger navbar-btn">Salir</button>
             </>
           ) : (

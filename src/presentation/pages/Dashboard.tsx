@@ -3,7 +3,6 @@ import { useAuth } from '../hooks/useAuth';
 import '../../styles/Dashboard.css';
 import '../../styles/Pages.css';
 
-// Vista principal del sistema, accesible después de iniciar sesión
 const Dashboard = () => {
   const { user } = useAuth();
 
@@ -16,7 +15,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* KPIs Principales con CSS Grid */}
       <div className="dashboard-kpis">
         <div className="card kpi-card">
           <div className="kpi-icon-wrapper bg-blue-light text-blue">
@@ -52,7 +50,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Panel de Desempeño Institucional */}
       <div className="dashboard-performance">
         <div className="card performance-card">
           <div className="performance-header">
@@ -67,7 +64,7 @@ const Dashboard = () => {
               <span className="status-value text-green">Óptimo</span>
             </div>
           </div>
-          
+
           <div className="performance-body">
             <p className="performance-intro">Resumen del rendimiento logístico del operador actual:</p>
             <ul className="performance-list">

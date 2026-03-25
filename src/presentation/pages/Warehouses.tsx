@@ -4,14 +4,13 @@ import { Warehouse } from '../../core/domain/types';
 import { warehouseRepository } from '../../infrastructure/repositories/MockWarehouseRepository';
 import '../../styles/Pages.css';
 
-// Vista que muestra la lista de todos los almacenes disponibles
 const Warehouses = () => {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulamos la obtención de datos desde la API
+
     warehouseRepository.getAll().then((data) => {
       setWarehouses(data);
       setLoading(false);

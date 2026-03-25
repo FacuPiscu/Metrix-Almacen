@@ -6,7 +6,7 @@ import { authRepository } from '../../infrastructure/repositories/MockAuthReposi
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: {email: string; password: string}) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
 
   // Intenta autenticar al usuario usando el repositorio
-  const login = async ({ email, password }: {email: string; password: string}) => {
+  const login = async ({ email, password }: { email: string; password: string }) => {
     setLoading(true);
     try {
       const authenticatedUser = await authRepository.login(email, password);
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Gancho que simplifica el consumo del contexto de autenticación
+// consumo del contexto de autenticación
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {

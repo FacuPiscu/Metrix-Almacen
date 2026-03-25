@@ -3,22 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import '../../styles/Login.css';
 
-// Vista principal de inicio de sesión
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Función que maneja el envío del formulario de autenticación
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
-    
+
     try {
       await login({ email, password });
       navigate('/dashboard', { replace: true });
@@ -32,7 +32,7 @@ const Login = () => {
   return (
     <div className="login-wrapper animate-fade-in">
       <div className="login-overlay"></div>
-      
+
       <div className="login-container card">
         <div className="login-header">
           <img src="/images/logo.png" alt="Logotipo Metrix" className="login-logo" />
@@ -78,9 +78,9 @@ const Login = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary login-submit" 
+          <button
+            type="submit"
+            className="btn btn-primary login-submit"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Ingresando...' : 'Ingresar al Sistema'}
