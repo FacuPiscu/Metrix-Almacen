@@ -1,4 +1,4 @@
-import { Activity, CheckCircle, Package, TrendingUp } from 'lucide-react';
+import { Activity, CheckCircle, TrendingUp, Star } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import '../../styles/Dashboard.css';
 import '../../styles/Pages.css';
@@ -42,12 +42,12 @@ const Dashboard = () => {
 
         <div className="card kpi-card">
           <div className="kpi-icon-wrapper bg-orange-light text-orange">
-            <Package strokeWidth={2.5} />
+            <Star strokeWidth={2.5} />
           </div>
           <div className="kpi-content">
-            <h3 className="kpi-title">Entregas Pendientes</h3>
-            <p className="kpi-value text-orange">12</p>
-            <p className="kpi-desc">Pedidos por despachar el día de hoy</p>
+            <h3 className="kpi-title">Puntos de Productividad</h3>
+            <p className="kpi-value text-orange">1,250 pts</p>
+            <p className="kpi-desc">Última acción: +50 pts (Recepción a tiempo)</p>
           </div>
         </div>
       </div>

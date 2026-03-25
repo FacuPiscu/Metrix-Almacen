@@ -3,10 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   MapPin, Pencil, Trash, Building2, PackagePlus, ArrowRightLeft, 
   Camera, QrCode, ClipboardCheck, CalendarClock, FileText, CheckCircle,
-  PackageMinus, Truck, CheckCheck, PenTool
+  PackageMinus, Truck, CheckCheck, PenTool, Eye
 } from 'lucide-react';
 import { Warehouse, Zone } from '../../core/domain/types';
+import { useAuth } from '../hooks/useAuth';
 import { warehouseRepository } from '../../infrastructure/repositories/MockWarehouseRepository';
+import ItemTraceability from '../components/ItemTraceability';
+import LiveTracking from '../components/LiveTracking';
 import '../../styles/Pages.css';
 import '../../styles/WarehouseDetail.css';
 
@@ -31,19 +34,22 @@ const MOCK_ITEMS: Item[] = [
 const WarehouseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   const [warehouse, setWarehouse] = useState<Warehouse | null>(null);
   const [zones, setZones] = useState<Zone[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'zones' | 'items' | 'categories' | 'inbound' | 'outbound'>('zones');
+  const [activeTab, setActiveTab] = useState<'zones' | 'items' | 'inbound' | 'outbound'>('zones');
   
   // INBOUND Modals state
   const [isInboundModalOpen, setIsInboundModalOpen] = useState(false);
   const [inboundStep, setInboundStep] = useState<'form' | 'success'>('form');
+  const [inboundForm, setInboundForm] = useState({ contract: '', date: '', provider: '' });
 
   const [isReceptionModalOpen, setIsReceptionModalOpen] = useState(false);
   const [receptionStep, setReceptionStep] = useState<'form' | 'success'>('form');
+  const [receptionForm, setReceptionForm] = useState({ inboundId: '', quantity: '', condition: '' });
 
   const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
   const [storeStep, setStoreStep] = useState<'form' | 'success'>('form');
@@ -59,6 +65,10 @@ const WarehouseDetail = () => {
   const [deliveryStep, setDeliveryStep] = useState<'form' | 'success'>('form');
 
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Trace Modal state
+  const [isTraceModalOpen, setIsTraceModalOpen] = useState(false);
+  const [selectedItemForTrace, setSelectedItemForTrace] = useState<Item | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -87,6 +97,7 @@ const WarehouseDetail = () => {
     setIsPackModalOpen(false); setPackStep('form');
     setIsDispatchModalOpen(false); setDispatchStep('form');
     setIsDeliveryModalOpen(false); setDeliveryStep('form');
+    setIsTraceModalOpen(false); setSelectedItemForTrace(null);
   };
 
   if (loading) return <div className="page-wrapper"><div className="loading-state">Cargando detalles del almacén...</div></div>;
@@ -122,9 +133,7 @@ const WarehouseDetail = () => {
         <button onClick={() => setActiveTab('items')} className={`tab-btn ${activeTab === 'items' ? 'active' : ''}`}>
           Stock de Artículos
         </button>
-        <button onClick={() => setActiveTab('categories')} className={`tab-btn ${activeTab === 'categories' ? 'active' : ''}`}>
-          Categorías
-        </button>
+
         <button onClick={() => setActiveTab('inbound')} className={`tab-btn ${activeTab === 'inbound' ? 'active' : ''}`}>
           Operaciones (Ingreso)
         </button>
@@ -155,8 +164,10 @@ const WarehouseDetail = () => {
                 <button 
                   className="btn btn-large btn-outline"
                   onClick={() => setIsPackModalOpen(true)}
+                  disabled={user?.role === 'operador'}
+                  title={user?.role === 'operador' ? 'Solo administradores pueden iniciar el empaque' : undefined}
                 >
-                  Iniciar Empaque
+                  {user?.role === 'operador' ? 'Acceso Restringido' : 'Iniciar Empaque'}
                 </button>
               </div>
 
@@ -302,6 +313,14 @@ const WarehouseDetail = () => {
                       <td className="item-name">{item.name}</td>
                       <td><span className="badge category-badge">{item.categoryName}</span></td>
                       <td className="actions-cell">
+                        <button 
+                          className="icon-btn" 
+                          style={{ color: '#0ea5e9', marginRight: '0.25rem' }}
+                          onClick={() => { setSelectedItemForTrace(item); setIsTraceModalOpen(true); }}
+                          title="Ver Trazabilidad"
+                        >
+                          <Eye className="icon-sm" />
+                        </button>
                         <button className="icon-btn edit-btn"><Pencil className="icon-sm" /></button>
                         <button className="icon-btn delete-btn"><Trash className="icon-sm text-danger" /></button>
                       </td>
@@ -313,15 +332,7 @@ const WarehouseDetail = () => {
           </div>
         )}
 
-        {activeTab === 'categories' && (
-          <div className="categories-section animate-fade-in">
-            <div className="section-header">
-              <h2>Categorías de Artículos</h2>
-              <button className="btn btn-primary">+ Nueva Categoría</button>
-            </div>
-            <div className="card"><div className="empty-state">Las categorías específicas de este almacén se mostrarán aquí.</div></div>
-          </div>
-        )}
+
       </div>
 
       {/* --- MODALES OUTBOUND --- */}
@@ -412,10 +423,8 @@ const WarehouseDetail = () => {
                   </div>
                 </>
               ) : (
-                <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                  <CheckCircle size={64} style={{ color: '#059669', margin: '0 auto 1rem auto' }} />
-                  <h3 style={{ marginBottom: '0.5rem' }}>Despacho Registrado</h3>
-                  <p className="text-light">El vehículo marcado ha salido de tus instalaciones con éxito.</p>
+                <div style={{ padding: '0' }}>
+                  <LiveTracking />
                 </div>
               )}
             </div>
@@ -495,15 +504,15 @@ const WarehouseDetail = () => {
                 <>
                   <div className="form-group">
                     <label className="form-label">Contrato Vinculado</label>
-                    <input type="text" className="form-control" placeholder="Ej: CT-2026-049" disabled={isProcessing} />
+                    <input type="text" className="form-control" placeholder="Ej: CT-2026-049" disabled={isProcessing} value={inboundForm.contract} onChange={(e) => setInboundForm({ ...inboundForm, contract: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Fecha Tentativa de Arribo</label>
-                    <input type="date" className="form-control" disabled={isProcessing} />
+                    <input type="date" className="form-control" disabled={isProcessing} value={inboundForm.date} onChange={(e) => setInboundForm({ ...inboundForm, date: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Razón Social del Proveedor</label>
-                    <input type="text" className="form-control" placeholder="Ej: Logística Internacional S.A." disabled={isProcessing} />
+                    <input type="text" className="form-control" placeholder="Ej: Logística Internacional S.A." disabled={isProcessing} value={inboundForm.provider} onChange={(e) => setInboundForm({ ...inboundForm, provider: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Domicilio de Entrega (Almacén Actual)</label>
@@ -522,7 +531,7 @@ const WarehouseDetail = () => {
               {inboundStep === 'form' ? (
                 <>
                   <button className="btn btn-secondary mr-2" onClick={closeModals} disabled={isProcessing}>Cancelar</button>
-                  <button className="btn btn-primary bg-blue flex-center" onClick={() => handleSimulateAction(setInboundStep)} disabled={isProcessing}>
+                  <button className="btn btn-primary bg-blue flex-center" onClick={() => { console.log('Inbound Form:', inboundForm); handleSimulateAction(setInboundStep); }} disabled={isProcessing}>
                     {isProcessing ? 'Procesando...' : <><ClipboardCheck size={18} className="mr-2" /> Guardar Aviso</>}
                   </button>
                 </>
@@ -552,22 +561,22 @@ const WarehouseDetail = () => {
                 <>
                   <div className="form-group">
                     <label className="form-label">Inbound Vinculado (Opcional)</label>
-                    <select className="form-control" disabled={isProcessing}>
-                      <option>Seleccionar un pre-aviso pendiente...</option>
-                      <option>CT-2026-049 - Logística Internacional S.A.</option>
+                    <select className="form-control" disabled={isProcessing} value={receptionForm.inboundId} onChange={(e) => setReceptionForm({ ...receptionForm, inboundId: e.target.value })}>
+                      <option value="">Seleccionar un pre-aviso pendiente...</option>
+                      <option value="CT-2026-049">CT-2026-049 - Logística Internacional S.A.</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Cantidad Recibida (Unidades/Bultos)</label>
-                    <input type="number" className="form-control" placeholder="Ej: 15" disabled={isProcessing} />
+                    <input type="number" className="form-control" placeholder="Ej: 15" disabled={isProcessing} value={receptionForm.quantity} onChange={(e) => setReceptionForm({ ...receptionForm, quantity: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Estado Físico del Embarque</label>
-                    <select className="form-control" disabled={isProcessing}>
-                      <option>Seleccione estado...</option>
-                      <option>Óptimo (Sin daños visibles)</option>
-                      <option>Regular (Empaque defectuoso pero contenido intacto)</option>
-                      <option>Deficiente (Daños reportados)</option>
+                    <select className="form-control" disabled={isProcessing} value={receptionForm.condition} onChange={(e) => setReceptionForm({ ...receptionForm, condition: e.target.value })}>
+                      <option value="">Seleccione estado...</option>
+                      <option value="Optimo">Óptimo (Sin daños visibles)</option>
+                      <option value="Regular">Regular (Empaque defectuoso pero contenido intacto)</option>
+                      <option value="Deficiente">Deficiente (Daños reportados)</option>
                     </select>
                   </div>
                   <div className="form-group">
@@ -590,7 +599,7 @@ const WarehouseDetail = () => {
               {receptionStep === 'form' ? (
                 <>
                   <button className="btn btn-secondary mr-2" onClick={closeModals} disabled={isProcessing}>Cancelar</button>
-                  <button className="btn btn-primary bg-blue flex-center" onClick={() => handleSimulateAction(setReceptionStep)} disabled={isProcessing}>
+                  <button className="btn btn-primary bg-blue flex-center" onClick={() => { console.log('Reception Form:', receptionForm); handleSimulateAction(setReceptionStep); }} disabled={isProcessing}>
                     {isProcessing ? 'Procesando...' : <><ClipboardCheck size={18} className="mr-2" /> Confirmar Recepción</>}
                   </button>
                 </>
@@ -668,6 +677,24 @@ const WarehouseDetail = () => {
                   </button>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Ver Trazabilidad */}
+      {isTraceModalOpen && selectedItemForTrace && (
+        <div className="modal-overlay">
+          <div className="modal-content animate-fade-in" style={{ maxWidth: '800px' }}>
+            <div className="modal-header">
+              <h3>Historial de Movimientos: {selectedItemForTrace.trackingCode}</h3>
+              <button className="close-btn" onClick={closeModals}>×</button>
+            </div>
+            <div className="modal-body" style={{ padding: '1.5rem' }}>
+              <ItemTraceability />
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={closeModals}>Cerrar Historial</button>
             </div>
           </div>
         </div>

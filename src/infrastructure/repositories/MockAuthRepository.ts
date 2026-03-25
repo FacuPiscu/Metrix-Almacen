@@ -6,7 +6,8 @@ class MockAuthRepository {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (email && password) {
-          resolve({ id: '1', email, name: 'Admin User' });
+          const role = email === 'admin@test.com' ? 'admin' : 'operador';
+          resolve({ id: '1', email, name: role === 'admin' ? 'Administrador' : 'Operador Logístico', role });
         } else {
           // Rechaza si los datos no están completos según las reglas del negocio
           reject(new Error('Credenciales inválidas'));
