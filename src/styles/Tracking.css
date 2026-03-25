@@ -1,0 +1,210 @@
+/* Styles for Tracking & Traceability Components */
+
+/* Traceability Timeline */
+.traceability-container {
+  overflow-x: auto;
+  padding: 2rem;
+}
+
+.trace-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+.timeline-horizontal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-width: 600px; /* Ensure no squishing on very small screens */
+  padding-bottom: 1rem;
+}
+
+.timeline-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.step-indicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.step-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  background-color: var(--surface-color);
+}
+
+.timeline-step.completed .step-icon {
+  color: var(--success-color);
+}
+
+.timeline-step.pending .step-icon {
+  border: 2px solid #cbd5e1;
+}
+
+.step-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #cbd5e1;
+  border-radius: 50%;
+}
+
+.step-line {
+  position: absolute;
+  top: 50%;
+  left: 2rem;
+  right: -1rem; /* Connects to the next dot */
+  height: 3px;
+  background-color: #cbd5e1;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.timeline-step.completed .step-line {
+  background-color: var(--success-color);
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  padding-right: 1rem;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.timeline-step.pending .step-label {
+  color: var(--text-light);
+}
+
+.step-date {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+/* Live Tracking Simulation */
+.live-tracking-container {
+  padding: 1.5rem;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-simulation {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.map-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  opacity: 0.6;
+}
+
+/* Animated Truck Marker */
+.truck-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.truck-icon-sim {
+  position: relative;
+  z-index: 2;
+  background: white;
+  padding: 0.25rem;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: rgba(37, 99, 235, 0.2);
+  border-radius: 50%;
+  z-index: 1;
+  animation: pulse 2s infinite ease-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Floating Info Card */
+.floating-info-card {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 320px;
+  background: white;
+  border-radius: var(--radius-lg);
+  z-index: 20;
+  border: 1px solid var(--border-color);
+}
+
+.info-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #f8fafc;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.info-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-light);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.info-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
