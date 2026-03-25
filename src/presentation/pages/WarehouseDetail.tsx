@@ -53,13 +53,16 @@ const WarehouseDetail = () => {
 
   const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
   const [storeStep, setStoreStep] = useState<'form' | 'success'>('form');
+  const [storeForm, setStoreForm] = useState({ itemId: '', zoneId: '' });
 
   // OUTBOUND Modals state
   const [isPackModalOpen, setIsPackModalOpen] = useState(false);
   const [packStep, setPackStep] = useState<'form' | 'success'>('form');
+  const [packForm, setPackForm] = useState({ projectId: '', boxId: '' });
 
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [dispatchStep, setDispatchStep] = useState<'form' | 'success'>('form');
+  const [dispatchForm, setDispatchForm] = useState({ vehicle: '' });
 
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [deliveryStep, setDeliveryStep] = useState<'form' | 'success'>('form');
@@ -350,18 +353,18 @@ const WarehouseDetail = () => {
                 <>
                   <div className="form-group">
                     <label className="form-label">Proyecto / Orden Vinculada</label>
-                    <select className="form-control" disabled={isProcessing}>
-                      <option>Seleccionar proyecto de salida...</option>
-                      <option>ORD-2026-902 - Redes Norte</option>
+                    <select className="form-control" disabled={isProcessing} value={packForm.projectId} onChange={(e) => setPackForm({ ...packForm, projectId: e.target.value })}>
+                      <option value="">Seleccionar proyecto de salida...</option>
+                      <option value="ORD-2026-902">ORD-2026-902 - Redes Norte</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Caja o Paquete Asignado</label>
-                    <input type="text" className="form-control" placeholder="Ej: CAJA-#52" disabled={isProcessing} />
+                    <input type="text" className="form-control" placeholder="Ej: CAJA-#52" disabled={isProcessing} value={packForm.boxId} onChange={(e) => setPackForm({ ...packForm, boxId: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Empacador (Operador Actual)</label>
-                    <input type="text" className="form-control" readOnly value="Admin / Encargado" />
+                    <input type="text" className="form-control" readOnly value={user?.name || 'Operador'} />
                   </div>
                 </>
               ) : (
@@ -376,7 +379,7 @@ const WarehouseDetail = () => {
               {packStep === 'form' ? (
                 <>
                   <button className="btn btn-secondary mr-2" onClick={closeModals} disabled={isProcessing}>Cancelar</button>
-                  <button className="btn btn-primary bg-blue flex-center" onClick={() => handleSimulateAction(setPackStep)} disabled={isProcessing}>
+                  <button className="btn btn-primary bg-blue flex-center" onClick={() => { console.log('Pack Form:', packForm); handleSimulateAction(setPackStep); }} disabled={isProcessing}>
                     {isProcessing ? 'Procesando...' : <><PackageMinus size={18} className="mr-2" /> Confirmar Cajas</>}
                   </button>
                 </>
@@ -406,7 +409,7 @@ const WarehouseDetail = () => {
                 <>
                   <div className="form-group">
                     <label className="form-label">Vehículo / Flotilla</label>
-                    <input type="text" className="form-control" placeholder="Ej: Camión Volvo Placa MX-901" disabled={isProcessing} />
+                    <input type="text" className="form-control" placeholder="Ej: Camión Volvo Placa MX-901" disabled={isProcessing} value={dispatchForm.vehicle} onChange={(e) => setDispatchForm({ ...dispatchForm, vehicle: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Firma de Aceptación del Conductor</label>
@@ -432,7 +435,7 @@ const WarehouseDetail = () => {
               {dispatchStep === 'form' ? (
                 <>
                   <button className="btn btn-secondary mr-2" onClick={closeModals} disabled={isProcessing}>Cancelar</button>
-                  <button className="btn btn-primary bg-blue flex-center" onClick={() => handleSimulateAction(setDispatchStep)} disabled={isProcessing}>
+                  <button className="btn btn-primary bg-blue flex-center" onClick={() => { console.log('Dispatch Form:', dispatchForm); handleSimulateAction(setDispatchStep); }} disabled={isProcessing}>
                     {isProcessing ? 'Procesando...' : <><Truck size={18} className="mr-2" /> Confirmar Salida</>}
                   </button>
                 </>
@@ -629,16 +632,16 @@ const WarehouseDetail = () => {
                 <>
                   <div className="form-group">
                     <label className="form-label">Seleccionar Lote/Artículo Recibido</label>
-                    <select className="form-control" disabled={isProcessing}>
-                      <option>Seleccione un artículo en espera...</option>
-                      <option>Lote-001 - Tornillo Mariposa (15x)</option>
-                      <option>Lote-002 - Cable HDMI (50x)</option>
+                    <select className="form-control" disabled={isProcessing} value={storeForm.itemId} onChange={(e) => setStoreForm({ ...storeForm, itemId: e.target.value })}>
+                      <option value="">Seleccione un artículo en espera...</option>
+                      <option value="LOTE-001">Lote-001 - Tornillo Mariposa (15x)</option>
+                      <option value="LOTE-002">Lote-002 - Cable HDMI (50x)</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Asignar a Zona Destino</label>
-                    <select className="form-control" disabled={isProcessing}>
-                      <option>Seleccione una zona de este almacén...</option>
+                    <select className="form-control" disabled={isProcessing} value={storeForm.zoneId} onChange={(e) => setStoreForm({ ...storeForm, zoneId: e.target.value })}>
+                      <option value="">Seleccione una zona de este almacén...</option>
                       {zones.map((z) => (
                         <option key={z.id} value={z.id}>{z.name}</option>
                       ))}
@@ -665,7 +668,7 @@ const WarehouseDetail = () => {
               {storeStep === 'form' ? (
                 <>
                   <button className="btn btn-secondary mr-2" onClick={closeModals} disabled={isProcessing}>Cancelar</button>
-                  <button className="btn btn-primary bg-green flex-center" onClick={() => handleSimulateAction(setStoreStep)} disabled={isProcessing}>
+                  <button className="btn btn-primary bg-green flex-center" onClick={() => { console.log('Store Form:', storeForm); handleSimulateAction(setStoreStep); }} disabled={isProcessing}>
                     {isProcessing ? 'Procesando...' : <><ArrowRightLeft size={18} className="mr-2" /> Almacenar</>}
                   </button>
                 </>

@@ -3,11 +3,26 @@ import { Link } from 'react-router-dom';
 import { Search, Bell } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import '../../styles/Navbar.css';
+import '../../styles/Navbar.css';
+
+const mockNotifications = [
+  { id: 1, text: 'Nueva orden de salida creada', time: 'Hace 5 min' },
+  { id: 2, text: 'Stock bajo en zona A', time: 'Hace 1 hora' },
+  { id: 3, text: 'Pre-aviso recibido (Logística Internacional)', time: 'Hace 2 horas' }
+];
 
 // Componente de navegación superior
 const Navbar = () => {
   const { user, logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      console.log('Buscando en sistema:', searchQuery);
+      // Aquí podrías agregar la lógica real de ruteo o fetcheo
+    }
+  };
 
   return (
     <nav className="navbar shadow-md">
@@ -31,6 +46,9 @@ const Navbar = () => {
               type="text" 
               placeholder="Buscar folios, artículos, actas..." 
               className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
         </div>
@@ -52,18 +70,24 @@ const Navbar = () => {
                   <div className="notification-dropdown animate-fade-in">
                     <div className="dropdown-header">Notificaciones</div>
                     <ul className="dropdown-list">
-                      <li className="dropdown-item">
-                        <p className="notif-text">Nueva orden de salida creada</p>
-                        <span className="notif-time">Hace 5 min</span>
-                      </li>
-                      <li className="dropdown-item">
-                        <p className="notif-text">Stock bajo en zona A</p>
-                        <span className="notif-time">Hace 1 hora</span>
-                      </li>
+                      {mockNotifications.map((notif) => (
+                        <li key={notif.id} className="dropdown-item">
+                          <p className="notif-text">{notif.text}</p>
+                          <span className="notif-time">{notif.time}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
               </div>
+              
+              {/* User Role Badge */}
+              <div style={{ marginLeft: '1rem', marginRight: '1rem', display: 'flex', alignItems: 'center' }}>
+                <span className="badge bg-blue-light text-blue" style={{ textTransform: 'capitalize' }}>
+                  {user.role}
+                </span>
+              </div>
+              
               <button onClick={logout} className="btn btn-danger navbar-btn">Salir</button>
             </>
           ) : (
