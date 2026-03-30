@@ -5,7 +5,12 @@ import { useAuth } from '../hooks/useAuth';
 
 // Disposición principal para las rutas que requieren inicio de sesión
 const MainLayout = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Muestra un estado de carga mientras se verifica la sesión si es necesario
+  if (loading) {
+    return <div className="loading-screen">Cargando sesión...</div>;
+  }
 
   // Redirige al inicio si no hay un usuario activo
   if (!user) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Warehouse } from '../../core/domain/types';
-import { warehouseRepository } from '../../infrastructure/repositories/MockWarehouseRepository';
+import { warehouseRepository } from '../../infrastructure/repositories/ApiWarehouseRepository';
 import '../../styles/Pages.css';
 
 const Warehouses = () => {
@@ -28,7 +28,7 @@ const Warehouses = () => {
         <div className="loading-state">Cargando almacenes...</div>
       ) : (
         <div className="grid-container">
-          {warehouses.map(warehouse => (
+          {Array.isArray(warehouses) && warehouses.map(warehouse => (
             <div key={warehouse.id} className="card item-card" onClick={() => navigate(`/warehouses/${warehouse.id}`)}>
               <h3 className="item-title">{warehouse.name}</h3>
               <p className="item-desc">{warehouse.description}</p>

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Warehouse, Zone } from '../../core/domain/types';
 import { useAuth } from '../hooks/useAuth';
-import { warehouseRepository } from '../../infrastructure/repositories/MockWarehouseRepository';
+import { warehouseRepository } from '../../infrastructure/repositories/ApiWarehouseRepository';
 import ItemTraceability from '../components/ItemTraceability';
 import LiveTracking from '../components/LiveTracking';
 import '../../styles/Pages.css';
@@ -269,7 +269,7 @@ const WarehouseDetail = () => {
               <button className="btn btn-primary">+ Nueva Zona</button>
             </div>
             <div className="grid-container">
-              {zones.length > 0 ? zones.map((zone) => (
+              {Array.isArray(zones) && zones.length > 0 ? zones.map((zone) => (
                 <div key={zone.id} className="card zone-card">
                   <div className="zone-header">
                     <div className="zone-icon-wrapper"><MapPin className="icon-map-pin" /></div>
@@ -298,7 +298,7 @@ const WarehouseDetail = () => {
                   <tr><th>Código / SKU</th><th>Nombre del Artículo</th><th>Categoría</th><th>Acciones</th></tr>
                 </thead>
                 <tbody>
-                  {items.length > 0 ? items.map((item) => (
+                  {Array.isArray(items) && items.length > 0 ? items.map((item) => (
                     <tr key={item.id}>
                       <td className="tracking-code">{item.trackingCode}</td>
                       <td className="item-name">{item.name}</td>

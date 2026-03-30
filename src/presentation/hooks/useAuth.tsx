@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User } from '../../core/domain/types';
-import { authRepository } from '../../infrastructure/repositories/MockAuthRepository';
+import { authRepository } from '../../infrastructure/repositories/ApiAuthRepository';
 
 // Define la estructura para el contexto de autenticación
 interface AuthContextType {
@@ -15,20 +15,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Proveedor del estado global de la sesión
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Intenta autenticar al usuario usando el repositorio
+  // Intenta recuperar el usuario persistido al cargar el proveedor
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const currentUser = await authRepository.getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  // Intenta autenticar al usuario usando el repositorio real
   const login = async ({ email, password }: { email: string; password: string }) => {
     setLoading(true);
     try {
       const authenticatedUser = await authRepository.login(email, password);
       setUser(authenticatedUser);
+    } catch (err: any) {
+      throw new Error(err.message || 'Error durante el inicio de sesión');
     } finally {
       setLoading(false);
     }
   };
 
-  // Cierra la sesión activa del usuario
+  // Cierra la sesión activa del usuario eliminando los datos de persistencia
   const logout = async () => {
     setLoading(true);
     await authRepository.logout();
